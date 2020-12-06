@@ -31,16 +31,18 @@ def about():
 def signup():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account successfully created for {form.username.data}!', 'success')
-        return redirect(url_for('home'))
+        hashed_password =bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your Account is successfully created,Now you can log in', 'success')
+        return redirect(url_for('login'))
     return render_template('signup.html', title='Signup', form=form)
     
 @app.route("/login",methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        hashed_password =bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         if form.email.data == 'admin@blog.com' and form.password.data == 'password':
             flash('You have been logged in!', 'success')
             return redirect(url_for('home'))
