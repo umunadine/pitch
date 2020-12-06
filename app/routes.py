@@ -1,5 +1,5 @@
 from flask import render_template, flash,url_for, redirect
-from app import app
+from app import app,db, bcrypt
 from app.forms import RegistrationForm,LoginForm
 from app.models import User,Post
 
@@ -31,7 +31,7 @@ def about():
 def signup():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
+        flash(f'Account successfully created for {form.username.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('signup.html', title='Signup', form=form)
     
@@ -39,6 +39,7 @@ def signup():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        hashed_password =bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         if form.email.data == 'admin@blog.com' and form.password.data == 'password':
             flash('You have been logged in!', 'success')
             return redirect(url_for('home'))
