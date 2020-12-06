@@ -11,4 +11,22 @@
       <p class="article-content">{{ post.content }}</p>
     </div>
   </article>
+  <div class="content-section">
+    <a class="ratings" href="{{ url_for('new_comment', post_id=post.id) }}"> Leave a comment</a>
+    <div class="mt-4 mb-4">
+            <h2>Comments</h2>
+            <hr>
+            {% if comments %}
+            {% for comment in comments %}
+            <ul>
+                <h4> {{ comment.comment }} </h4>
+            </ul>
+        
+        {% endfor %} 
+        {% else %}
+            <p>No comments</p>
+        {% endif %}
+        </div>
+</div>
+        
 {% endblock content %}
