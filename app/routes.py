@@ -40,6 +40,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         hashed_password =bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         if form.email.data == 'admin@blog.com' and form.password.data == 'password':
             flash('You have been logged in!', 'success')
             return redirect(url_for('home'))
