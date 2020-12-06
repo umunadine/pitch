@@ -32,3 +32,12 @@ class Post(db.Model):
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
 
+class Comment(db.Model):
+    username = db.Column(db.String(50), nullable=False)
+    comment = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f"Comment('{self.username}', '{self.comment}')"
+
+
+
