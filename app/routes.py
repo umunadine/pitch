@@ -3,8 +3,8 @@ import secrets
 from PIL import Image
 from flask import render_template, flash,url_for, redirect, request
 from app import app,db, bcrypt
-from app.forms import RegistrationForm,LoginForm,UpdateAccountForm,PostForm
-from app.models import User,Post
+from app.forms import RegistrationForm,LoginForm,UpdateAccountForm,PostForm,PostComment
+from app.models import User,Post,Comment
 from flask_login import login_user,current_user,logout_user,login_required
 
 
@@ -102,4 +102,19 @@ def new_post():
 @app.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
+    comments = Comment.query.filter_by(post_id = post_id).all()
+    return render_template('post.html', title=post.title, post=post,comments=comments)
+
+
+@app.route("/post/<int:post_id>/comment", methods=['GET', 'POST'])
+@login_required
+def new_comment(post_id):
+    post = Post.query.get_or_404(post_id)
+    form = PostComment()
+    if form.validate_on_submit():
+        comment = Comment(comment=form.comment.data, post_id = post_id)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment created successfully', 'success')
+        return redirect(url_for('post', post_id=post.id))
+    return render_template('comments.html', title='Comment', form=form, legend='Comment')
